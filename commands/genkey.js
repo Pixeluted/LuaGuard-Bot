@@ -88,8 +88,6 @@ module.exports = {
             .setTimestamp(),
         ],
       });
-
-      console.log(client.activeKeys);
     }
   },
 };
