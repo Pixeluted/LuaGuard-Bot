@@ -39,26 +39,24 @@ module.exports = {
    * @param {string[]} args
    */
   execute: async (client, message, args) => {
+    if (args[0] == null) {
+      return message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle(client.user.username)
+            .setDescription("You must specify a user!")
+            .setColor("White")
+            .setTimestamp(),
+        ],
+      });
+    }
+
     let user;
 
     if (message.mentions.users.size > 0) {
       user = message.mentions.users.first();
     } else {
       user = await client.users.fetch(args[0]);
-    }
-
-    if (!user) {
-      return message.channel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle(client.user.username)
-            .setDescription(
-              "Specify what user you want to remove from whitelist!"
-            )
-            .setColor("White")
-            .setTimestamp(),
-        ],
-      });
     }
 
     if ((await checkIfUserWhitelisted(user.id)) == false) {

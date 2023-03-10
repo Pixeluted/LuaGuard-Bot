@@ -17,6 +17,8 @@ async function checkIfUserWhitelisted(discordId) {
       response.data.key_status == "Assigned"
     ) {
       return true;
+    } else if (response.data == "No key found.") {
+      return false;
     }
   } catch (err) {
     return false;
@@ -24,8 +26,8 @@ async function checkIfUserWhitelisted(discordId) {
 }
 
 module.exports = {
-  name: "whitelist",
-  description: `USAGE: \`${process.env.PREFIX}whitelist <mention>/<userid>\``,
+  name: "blacklist",
+  description: `USAGE: \`${process.env.PREFIX}blacklist <mention>/<userid>\``,
   permissions: {
     requiredPermissions: [], // Add required permissions here
     requiredRoles: [process.env.WHITELIST_PERMISSIONS_ROLE_ID], // Add required role IDs here
@@ -42,7 +44,7 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setTitle(client.user.username)
-            .setDescription("You must specify a user to whitelist!")
+            .setDescription("You must specify a user to blacklist!")
             .setColor("White")
             .setTimestamp(),
         ],
@@ -57,12 +59,12 @@ module.exports = {
       user = await client.users.fetch(args[0]);
     }
 
-    if (await checkIfUserWhitelisted(user.id)) {
+    if ((await checkIfUserWhitelisted(user.id)) == false) {
       return message.channel.send({
         embeds: [
           new EmbedBuilder()
             .setTitle(client.user.username)
-            .setDescription(`<@${user.id}> is already whitelisted!`)
+            .setDescription("This user is not whitelisted!")
             .setColor("White")
             .setTimestamp(),
         ],
@@ -72,34 +74,28 @@ module.exports = {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://api.luawl.com/whitelistUser.php",
+        url: "https://api.luawl.com/createBlacklist.php",
         data: {
           token: process.env.LUAGUARD_TOKEN,
-          discord_id: message.author.id,
+          discord_id: user.id,
         },
       });
 
-      const guildMember = await message.guild.members.fetch(user.id);
-      guildMember.roles.add(process.env.BUYER_ROLE_ID);
-
-      return message.channel.send({
+      message.channel.send({
         embeds: [
           new EmbedBuilder()
             .setTitle(client.user.username)
-            .setDescription(`<@${user.id}> has been successfully whitelisted!`)
+            .setDescription(`<@${user.id}> has been blacklisted!`)
             .setColor("White")
             .setTimestamp(),
         ],
       });
-    } catch (err) {
-      console.log(err);
-      return message.channel.send({
+    } catch {
+      message.channel.send({
         embeds: [
           new EmbedBuilder()
             .setTitle(client.user.username)
-            .setDescription(
-              "Error occured while trying to whitelist this user!"
-            )
+            .setDescription("An error occured while blacklisting the user!")
             .setColor("White")
             .setTimestamp(),
         ],
