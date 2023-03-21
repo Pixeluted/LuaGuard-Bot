@@ -19,6 +19,6 @@ Able to run: `npm i` in a console
 
 ### Running the bot
 
-Open the folder of the bot in a commdn prompt (with the correct directory) or an code editor (that allows for console input line vsc) and run the following: <br> `npm run start`<br>
+Open the folder of the bot in a commdn prompt (with the correct directory) or an code editor (that allows for console input line vsc) and run the following: <br> `node .`<br>
 
 The bot should run without any issues. Enjoy. <br><br> <u>Documentation made by [Antwan/LocalSmail](https://github.com/LocalSmail)</u>
